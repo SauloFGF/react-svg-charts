@@ -1,4 +1,6 @@
 import type { BarDatum, BarLayout } from './types'
+import { createLinearScaleWithZeroBase } from './scales'
+import { createBandScale } from './bandScale'
 
 export type BarLayoutOptions = {
     chartWidth?: number
@@ -11,27 +13,38 @@ export function computeBarLayout(
     options: BarLayoutOptions = {}
 ): BarLayout[] {
     const {
-        chartWidth = 1000,
+        chartWidth = 100,
         chartHeight = 100,
         gap = 2,
     } = options
 
     if (data.length === 0) return []
 
+    const domain = data.map(d => d.label)
+
     const maxValue = Math.max(...data.map(d => d.value), 0)
-    const barWidth = chartWidth / data.length
+
+    const xScale = createBandScale({
+        domain,
+        range: [0, chartWidth],
+        gap
+    })
+
+    const yScale = createLinearScaleWithZeroBase(
+        maxValue,
+        [0, chartHeight]
+    )
 
     return data.map((datum, index) => {
-        const normalizedValue = maxValue === 0 ? 0 : datum.value / maxValue
-        const height = normalizedValue * chartHeight
+        const height = yScale(datum.value)
 
         return {
             index,
             label: datum.label,
             value: datum.value,
-            x: index * barWidth,
+            x: xScale(datum.label, index),
             y: chartHeight - height,
-            width: barWidth - gap,
+            width: xScale.bandwidth(),
             height
         }
     })

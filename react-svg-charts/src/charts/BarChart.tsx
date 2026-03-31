@@ -2,6 +2,12 @@ import React from "react";
 import { Bars } from "../components/Bars";
 import { computeBarLayout } from "../core/layout";
 import type { BarDatum } from "../core/types";
+import { AxisY } from "../components/AxisY";
+import { createLinearScaleWithZeroBase } from "../core/scales";
+import { createBandScale } from "../core/bandScale";
+import { AxisX } from "../components/AxisX";
+
+type Margin = { top: number, right: number, bottom: number, left: number }
 
 export type BarChartProps = {
     data: BarDatum[]
@@ -9,7 +15,10 @@ export type BarChartProps = {
     height?: number
     gap?: number
     colors?: string[] | ((string: number) => string)
+    margin?: Margin
 }
+
+const defaultMargin: Margin = { top: 20, right: 20, bottom: 20, left: 40 }
 
 export function BarChart({
     data,
@@ -17,15 +26,42 @@ export function BarChart({
     height = 300,
     gap = 2,
     colors = ['#4f46e5'],
+    margin = defaultMargin,
 }: BarChartProps) {
-    const layout = React.useMemo(() =>
-        computeBarLayout(data,
-            {
-                chartWidth: 100,
-                chartHeight: 100,
-                gap,
+
+    const innerWidth = width - margin.left - margin.right
+    const innerHeight = height - margin.top - margin.bottom
+    const labels = data.map(d => d.label)
+
+    const maxValue = React.useMemo(
+        () => Math.max(...data.map(d => d.value), 0),
+        [data]
+    );
+
+    const yScale = React.useMemo(
+        () => createLinearScaleWithZeroBase(maxValue, [innerHeight, 0]),
+        [maxValue, innerHeight]
+    )
+
+    const xScale = React.useMemo(
+        () =>
+            createBandScale({
+                domain: labels,
+                range: [0, innerWidth],
+                gap
             }),
-        [data, gap]
+        [labels, innerWidth, gap]
+    );
+
+    const layout = React.useMemo(
+        () =>
+            computeBarLayout(data,
+                {
+                    chartWidth: innerWidth,
+                    chartHeight: innerHeight,
+                    gap,
+                }),
+        [data, innerWidth, innerHeight, gap]
     )
 
     const getColor = React.useCallback(
@@ -39,15 +75,26 @@ export function BarChart({
     )
 
     return (
-        <svg viewBox="0 0 100 100"
+        <svg viewBox={`0 0 ${width} ${height}`}
             width={width}
             height={height}
             role="img"
         >
-            <Bars
-                bars={layout}
-                fill={(bar) => getColor(bar.index)}
-            />
+            <g transform={`translate(${margin.left}, ${margin.top})`}>
+                <AxisY
+                    maxValue={maxValue}
+                    scale={yScale}
+                    height={innerHeight} />
+
+                <AxisX
+                    scale={xScale}
+                    labels={labels}
+                    height={innerHeight} />
+
+                <Bars
+                    bars={layout}
+                    fill={(bar) => getColor(bar.index)} />
+            </g>
         </svg>
     )
 }

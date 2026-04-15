@@ -1,7 +1,7 @@
 import React from "react";
 import { Bars } from "../components/Bars";
 import { computeBarLayout } from "../core/layout";
-import type { BarDatum } from "../core/types";
+import type { AxisLabelConfig, BarDatum } from "../core/types";
 import { AxisY } from "../components/AxisY";
 import { createLinearScaleWithZeroBase } from "../core/scales";
 import { createBandScale } from "../core/bandScale";
@@ -16,6 +16,11 @@ export type BarChartProps = {
     gap?: number
     colors?: string[] | ((string: number) => string)
     margin?: Margin
+    xAxisLabelConfig?: AxisLabelConfig
+    yAxisLabelConfig?: AxisLabelConfig
+    xAxisRotate?: number
+    showXAxis?: boolean
+    showYAxis?: boolean
 }
 
 const defaultMargin: Margin = { top: 20, right: 20, bottom: 20, left: 40 }
@@ -27,6 +32,11 @@ export function BarChart({
     gap = 2,
     colors = ['#4f46e5'],
     margin = defaultMargin,
+    xAxisLabelConfig = {},
+    yAxisLabelConfig = {},
+    xAxisRotate = 0,
+    showXAxis = true,
+    showYAxis = true
 }: BarChartProps) {
 
     const innerWidth = width - margin.left - margin.right
@@ -74,22 +84,43 @@ export function BarChart({
         [colors]
     )
 
+    //Clacular largura máxima baseada no expaço disponível por barra
+    const estimatedMaxLabelWidth = React.useMemo(() => {
+        return xScale.bandwidth() + gap
+    }, [xScale, gap])
+
+    const mergedXAxisConfig = React.useMemo(() => ({
+        maxWidth: estimatedMaxLabelWidth,
+        overFlowStrategy: 'truncate' as const,
+        maxLines: 2,
+        ...xAxisLabelConfig
+    }), [xAxisLabelConfig, estimatedMaxLabelWidth])
+
     return (
-        <svg viewBox={`0 0 ${width} ${height}`}
+        <svg
+            viewBox={`0 0 ${width} ${height}`}
             width={width}
             height={height}
             role="img"
         >
             <g transform={`translate(${margin.left}, ${margin.top})`}>
-                <AxisY
-                    maxValue={maxValue}
-                    scale={yScale}
-                    height={innerHeight} />
-
-                <AxisX
-                    scale={xScale}
-                    labels={labels}
-                    height={innerHeight} />
+                {showYAxis && (
+                    <AxisY
+                        maxValue={maxValue}
+                        scale={yScale}
+                        height={innerHeight}
+                        labelConfig={yAxisLabelConfig}
+                    />
+                )}
+                {showXAxis && (
+                    <AxisX
+                        scale={xScale}
+                        labels={labels}
+                        height={innerHeight}
+                        rotate={xAxisRotate}
+                        labelConfig={mergedXAxisConfig}
+                    />
+                )}
 
                 <Bars
                     bars={layout}

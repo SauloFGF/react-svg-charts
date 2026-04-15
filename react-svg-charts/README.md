@@ -1,79 +1,38 @@
-# SVG Bar Charts# SVG Bar Charts de gráficos de barras construída em **React + SVG**, focada em:
-- **clareza visual**
-- **princípios corretos de visualização de dados**
-- **baixo nível de abstração**
+# 📊 SVG Bar Charts
 
-## O que é um gráfico de barras?
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.0+-61dafb.svg)](https://reactjs.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Bundle Size](https://img.shields.io/badge/dynamic/json?label=minzipped&query=$..size&url=https://deno.bundlejs.com/?q=svg-bar-charts)](https://bundlejs.com/?q=svg-bar-charts)
 
-Um gráfico de barras serve para:
-- Comparar valores discretos
-- Mostrar diferença de magnitude
-- Facilitar comparações rápidas
+Uma biblioteca de gráficos de barras em **React + SVG** focada em **clareza visual**, **princípios corretos de visualização de dados** e **baixo nível de abstração**.
 
-### Regras fundamentais
+## 🎯 Por que esta biblioteca?
 
-- Cada barra representa uma categoria
-- O comprimento da barra codifica o valor
-- O eixo principal representa quantidade, não categoria
-- A escala padrão sempre começa em zero
+Diferente de soluções completas como Recharts ou Victory, esta biblioteca:
 
-Essas regras **não são opcionais** e são garantidas pela biblioteca.
+- **Não esconde o SVG** - Você tem controle total sobre o markup
+- **Garante boas práticas** - Escalas sempre começam do zero, proporções corretas
+- **É mínima e tree-shakeable** - Carregue apenas o que usar
+- **Prioriza acessibilidade** - Semântica SVG correta e roles ARIA
+- **É uma base sólida** - Construa suas próprias abstrações por cima
 
----
+## 📖 Princípios de Visualização
 
-## Modelo mental da biblioteca
+### O que é um gráfico de barras?
 
-``
+Um gráfico de barras é a ferramenta visual mais eficaz para:
+- ✅ Comparar valores entre categorias discretas
+- ✅ Mostrar diferenças de magnitude
+- ✅ Facilitar comparações rápidas e precisas
 
-No SVG, tudo se resume a:
-- `x`
-- `y`
-- `width`
-- `height`
+### Regras fundamentais (garantidas pela lib)
 
----
+| Regra | Implementação |
+|-------|---------------|
+| Cada barra representa uma categoria | Mapeamento 1:1 com `BarDatum.label` |
+| Comprimento da barra codifica o valor | Escala linear proporcional |
+| Eixo principal representa quantidade | Eixo Y sempre quantitativo |
+| Escala sempre começa em zero | `createLinearScaleWithZeroBase` |
 
-## O que a biblioteca garante
-
-✅ Escalas coerentes  
-✅ Layout consistente  
-✅ Base em zero por padrão  
-✅ Cálculo correto de proporção  
-✅ SVG puro, sem canvas  
-
----
-
-## O que a biblioteca permite
-
-- Mudança de orientação (vertical / horizontal)
-- Ordenação automática:
-  - Alfabética
-  - Temporal
-  - Crescente / decrescente
-- Agrupamento de barras
-- Empilhamento
-- Customização visual (cores, espaçamento)
-
----
-
-## O que esta biblioteca NÃO é
-
-❌ Não é um dashboard pronto  
-❌ Não esconde SVG  
-❌ Não força temas ou estilos  
-❌ Não anima sem intenção  
-
----
-
-## Status do projeto
-
-🚧 Em desenvolvimento  
-Este projeto começou como estudo e evoluiu para uma biblioteca educacional e experimental.
-
----
-
-## Filosofia
-
-> Uma biblioteca de visualização deve proteger o usuário
-> de representações erradas de dados,
-> mesmo quando permite flexibilidade visual.
+> **Importante**: Estas regras não são opcionais. São garantias matemáticas que protegem contra representações enganosas de dados.

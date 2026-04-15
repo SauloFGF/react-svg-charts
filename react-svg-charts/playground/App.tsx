@@ -1,8 +1,8 @@
 import { BarChart } from '../src'
 
 const data1 = [{
-    label: "LIDIANE",
-    value: 5
+    label: "LIDIANEssssss",
+    value: 52
 },
 {
     label: "LORENA",
@@ -49,85 +49,86 @@ const data1 = [{
     value: 4
 }]
 
-const data2 = [{
-    label: "LIDIANE",
-    value: 17
-},
-{
-    label: "LORENA",
-    value: 8
-},
-{
-    label: "MARCELA",
-    value: 8
-},
-{
-    label: "SIMONE",
-    value: 108
-},
-{
-    label: "ZELIA",
-    value: 21
-},
-{
-    label: "HELEN",
-    value: 16
-},
-{
-    label: "THAIS",
-    value: 39
-},
-{
-    label: "BRUNA",
-    value: 21
-},
-{
-    label: "ISABELA",
-    value: 24
-},
-{
-    label: "ELIENE",
-    value: 22
-},
-{
-    label: "LUCIANA",
-    value: 43
-},
-{
-    label: "DANRLLEY",
-    value: 14
-}]
-
 export function App() {
     return (
         <>
-            <div style={{ width: 600 }}>
-                <h1>BarChart - CandidatoEntrevistados</h1>
+            <div style={{ width: 800 }}>
+                <h1>BarChart - Labels Customizadas</h1>
 
-                <BarChart data={data1}
-                    width={600}
-                    height={600}
+                <h2>Truncate (padrão)</h2>
+                <BarChart
+                    data={data1}
+                    width={800}
+                    height={400}
                     gap={20}
-                    colors={['#10b981',
-                        // '#e21313',
-                        // '#f59e0b',
-                        '#8b5cf6']}
+                    margin={{ top: 20, right: 20, bottom: 60, left: 60 }}
+                    xAxisLabelConfig={{
+                        overflowStrategy: 'truncate',
+                        maxLines: 1
+                    }}
+                    colors={['#10b981', '#8b5cf6']}
                 />
-            </div>
-            <div style={{ width: 600 }}>
-                <h1>BarChart - CandidatoAgendados</h1>
 
-                <BarChart data={data2}
-                    width={600}
-                    height={600}
+                <h2>Wrap - Quebra de linha</h2>
+                <BarChart
+                    data={data1}
+                    width={800}
+                    height={400}
+                    gap={20}
+                    margin={{ top: 20, right: 20, bottom: 80, left: 60 }}
+                    xAxisLabelConfig={{
+                        overflowStrategy: 'wrap',
+                        maxLines: 2,
+                        lineHeight: 12
+                    }}
+                    colors={['#10b981', '#8b5cf6']}
+                />
 
-                // colors={['#10b981',
-                //     '#e21313',
-                //     '#f59e0b',
-                //     '#8b5cf6']}
+                <h2>Ellipsis - Com reticências</h2>
+                <BarChart
+                    data={data1}
+                    width={800}
+                    height={400}
+                    gap={20}
+                    margin={{ top: 20, right: 20, bottom: 60, left: 60 }}
+                    xAxisLabelConfig={{
+                        overflowStrategy: 'ellipsis',
+                        maxLines: 1
+                    }}
+                    colors={['#10b981', '#8b5cf6']}
+                />
+
+                <h2>Rotate - Rotacionado 45°</h2>
+                <BarChart
+                    data={data1}
+                    width={800}
+                    height={400}
+                    gap={20}
+                    margin={{ top: 20, right: 20, bottom: 80, left: 60 }}
+                    xAxisRotate={-45}
+                    xAxisLabelConfig={{
+                        overflowStrategy: 'rotate',
+                    }}
+                    colors={['#10b981', '#8b5cf6']}
+                />
+
+                <h2>Formatter - Personalizado</h2>
+                <BarChart
+                    data={data1}
+                    width={800}
+                    height={400}
+                    gap={20}
+                    margin={{ top: 20, right: 20, bottom: 60, left: 60 }}
+                    xAxisLabelConfig={{
+                        formatter: (label) => label.toLowerCase(),
+                        overflowStrategy: 'truncate'
+                    }}
+                    yAxisLabelConfig={{
+                        formatter: (value) => `${value} un`
+                    }}
+                    colors={['#10b981', '#8b5cf6']}
                 />
             </div>
         </>
-
     )
 }

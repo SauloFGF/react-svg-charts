@@ -1,4 +1,6 @@
 import type { LinearScale } from "../core/scales"
+import { formatLabel } from "../core/textUtils";
+import type { AxisLabelConfig } from "../core/types";
 
 export type AxisYProps = {
     scale: LinearScale;
@@ -7,11 +9,11 @@ export type AxisYProps = {
     ticks?: number;
     tickSize?: number;
     fontSize?: number;
+    labelConfig?: AxisLabelConfig
 }
 
 function generateTicks(max: number, count: number): number[] {
     if (count <= 0) return [];
-
     const step = max / count
     return Array.from({ length: count + 1 }, (_, i) => i * step)
 }
@@ -22,8 +24,15 @@ export function AxisY({
     maxValue,
     ticks = 5,
     tickSize = 6,
-    fontSize = 10 }: AxisYProps) {
+    fontSize = 10,
+    labelConfig = {}
+}: AxisYProps) {
     const values = generateTicks(maxValue, ticks);
+
+    const formatValue = (value: number, index: number) => {
+        const formatted = formatLabel(String(Math.round(value)), index, labelConfig)
+        return labelConfig?.formatter ? formatted : Math.round(value).toString()
+    }
 
     return (
         <g>
@@ -35,8 +44,9 @@ export function AxisY({
                 stroke="currentColor"
             />
 
-            {values.map((value) => {
+            {values.map((value, index) => {
                 const y = scale(value)
+                const displayText = formatValue(value, index)
 
                 return (
                     <g key={value} transform={`translate(0, ${y})`}>
@@ -54,7 +64,7 @@ export function AxisY({
                             textAnchor="end"
                             dominantBaseline="middle"
                         >
-                            {Math.round(value)}
+                            {displayText}
                         </text>
                     </g>
                 )
